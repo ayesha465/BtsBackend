@@ -66,3 +66,4 @@ const IDevice = mongoose.model(
 //{ timestamps: true  }
 );  
 module.exports = IDevice;
+//module.exports = IPAddressSchema;

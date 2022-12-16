@@ -4,7 +4,7 @@ const db = require("../models");
 
 const User = db.user;
 const Role = db.role;
-
+const IDevice = db.device
 const RefreshToken = require("../models/refreshToken.model");
 
 const crypto = require('crypto');
@@ -12,8 +12,8 @@ var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const Joi = require("joi");
 const sendEmail = require("../Helpers/sendEmail");
-const { IDevice } = require("../models");
-
+//const { IDevice } = require("../models/device");
+//const { IPAddressSchema } = require("../models/device");
 exports.signup = (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -207,16 +207,18 @@ exports.recoverPassword =async (req, res) => {
       const user = await User.findOne({ email: req.body.email });
       if (!user)
           return res.status(400).send("user with given email doesn't exist");
-
-      let token = await RefreshToken.findOne({ userId: user._id });
+      //console.log(req.body.email)
+      let token = await RefreshToken.findOne({ userId: user._id});
+      console.log(req.body.token)
       if (!token) {
           token = await new RefreshToken({
               userId: user._id,
               token: crypto.randomBytes(32).toString("hex"),
           }).save();
       }
-      console.log(req.params.token)
-      const link = `${process.env.MONGODB_URL}/password-reset/${user._id}/${token.token}`;
+      //console.log(req.body.userId)
+      //console.log(req.body.token)
+      const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
       await sendEmail(user.email, "Password reset", link);
 
       res.send("password reset link sent to your email account");
@@ -225,60 +227,6 @@ exports.recoverPassword =async (req, res) => {
       console.log(error);
   }
 };
-/*exports.changepassword=async (req, res) => {
-  async.waterfall([
-      function(done){
-          User.findOne({email: req.body.email}, function(err, user){
-              if(!user){
-                  return res.status(422).send({errors: [{title: 'Invalid email!', detail: 'User does not exist'}]});
-              }
-
-              const token = jwt.sign({
-                  userId: user.id,
-                  username: user.username,
-                  resetPasswordToken: user.resetPasswordToken
-                }, config.secret, { expiresIn: '1h' });
-
-              user.resetPasswordToken = token;
-              user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
-              user.save(function(err){
-                  done(err, token, user);
-              });
-          });
-      },
-
-      function(token, user, done){
-          const smtpTransport = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: 'ayeshaabbasi433@gmail.com',
-                  pass: 'Dani1234'
-              }
-          });
-
-          const mailOptions = {
-              to: user.email,
-              from: 'ayeshaabbasi433@gmail.com',
-              subject: 'Nodejs password reset',
-              text: 'You are receiving this email. Please click on the email for password reset ' +
-                    'http://' + req.headers.host + '/reset/' + token + '\n\n' + 
-                    'If you did not request this, please ignore this email'
-          };
-          smtpTransport.sendMail(mailOptions, function(err){
-              console.log('mail sent');
-              done(err, 'done');
-          });
-      }
-  ], function(err){
-      if(err) return next(err);
-  });
-};
-*/
-
-
-
-
 
 exports.changepassword= async (req, res) => {
   console.log(req.params)
@@ -293,7 +241,7 @@ exports.changepassword= async (req, res) => {
 
       const token = await RefreshToken.findOne({
           userId: user._id,
-          token: req.params.token,
+          token: req.body.token,
       });
       
       console.log(token)
@@ -312,14 +260,13 @@ exports.changepassword= async (req, res) => {
 
 exports.register = async (req, res) => 
 {
-  try 
-  {
+  
     //const service = new AuthService(settings.AUTH);
 
     //const { session, ...result } = await service.register(req.body, req.client);
-    const device = new IPAddressSchema({
+    const device = new IDevice({
       
-      Address:req.body.Address,
+      address:req.body.address,
   
     });
     device.save((err, device) => 
@@ -329,22 +276,8 @@ exports.register = async (req, res) =>
         return;
       }
     })
-    res.cookie(200).token, {
-      expires: session.expiresAt,
-      httpOnly: true,
-      path: "/",
-      signed: true,
-      secure: settings.HTTPS_ONLY,
-    };
-
-    return res.status(201).json(result);
-  }
-  catch (e) 
-  {
-    if (e instanceof ServiceError) return res.status(e.status).json(e);
-    return res.status(500).json(new ServiceError());
-    
-  }
+  
+  
 
 };
 

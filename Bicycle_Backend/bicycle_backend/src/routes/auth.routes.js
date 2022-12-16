@@ -25,10 +25,10 @@ module.exports = function(app) {
   app.post("/api/auth/signin", controller.signin);
   app.post("/api/auth/refreshtoken", controller.refreshToken);
   
-  app.post('/api/auth/recover',controller.recoverPassword);
+  app.post('/api/password-reset/',controller.recoverPassword);
   app.patch('/api/auth/:id',controller.updateaccount);
   //app.post('/api/auth/:id',controller.update);
-  app.post('/api/auth/:id',controller.changepassword);
+  app.patch('/api/:id',controller.changepassword);
   app.delete('/api/auth/:id',controller.delete);
   app.post("/api/auth/register", controller.register);
   app.post("/api/auth/Devicelogin", controller.Devicelogin);
