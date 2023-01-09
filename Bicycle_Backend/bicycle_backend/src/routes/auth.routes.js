@@ -32,4 +32,8 @@ module.exports = function(app) {
   app.delete('/api/auth/:id',controller.delete);
   app.post("/api/auth/register", controller.register);
   app.post("/api/auth/Devicelogin", controller.Devicelogin);
+  app.post("/api/auth/adminuser", controller.AddAdminuser);
+  app.post("/api/auth/bikestoleninfo", controller.BikeStolen);
+  app.post("/api/auth/healthchecker", controller.HealthChecker);
+
 };

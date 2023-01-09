@@ -1,7 +1,43 @@
 //import mongoose, { Schema, Model, Document } from "mongoose";
 const mongoose = require("mongoose");
 const Schema =require("mongoose")
-const IPAddressSchema = new mongoose.Schema(
+//const uid = require ("uid");
+const User = require("./user.model");
+const { uid } =require( "rand-token");
+const { escapeNumberedList } = require("discord.js");
+
+/*export const  IUserAgent= {
+  
+  
+  raw: String,
+  createdAt: Date,
+  updatedAt: Date,
+  
+}
+
+ export const IIPAddress= 
+{
+  address: string,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+  export const ISession = {
+  user: Types.ObjectId | User,
+  device: Types.ObjectId | IDevice,
+  //agents: Types.Array<IUserAgentDocument>,
+  //hosts: Types.Array<IIPAddressDocument>,
+  token: string,
+  revokedReason: "logout" | "expired",
+  revokedAt: Date,
+  expiresAt: Date,
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+*/
+
+ const IPAddressSchema = new mongoose.Schema(
     {
       address: {
         type: String,
@@ -11,7 +47,7 @@ const IPAddressSchema = new mongoose.Schema(
     { timestamps: true }
   );
   
-  const UserAgentSchema = new mongoose.Schema(
+   const UserAgentSchema = new mongoose.Schema(
     {
       raw: {
         type: String,
@@ -20,19 +56,21 @@ const IPAddressSchema = new mongoose.Schema(
     },
     { timestamps: true }
   );
-const IDevice = mongoose.model(
-    "IDevice",
-    new mongoose.Schema
+
+  
+const UserSchema = 
+   
+     mongoose.Schema
     ({
   createdAt: Date,
   updatedAt: Date,
   user: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true,
   },
   device: {
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: "Device",
     required: true,
   },
@@ -62,8 +100,24 @@ const IDevice = mongoose.model(
     enum: ["logout", "expired"],
   },
   
-}),
+})
 //{ timestamps: true  }
-);  
+var IDevice = mongoose.model('IDevice', UserSchema);
+
+// save user to database
+IDevice.adddevice = function(device, callback)
+{
+    console.log("Test reaching here")
+    
+                    device.save((err, result)=>
+                    {
+                        if(err){
+                            console.log(err);
+                            callback('Failed to add', null);
+                        } else{
+                            callback(null, 'device added');
+                        }
+                    });
+}
+
 module.exports = IDevice;
-//module.exports = IPAddressSchema;

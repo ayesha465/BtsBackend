@@ -1,10 +1,12 @@
 const config = require("../config/auth.config");
+const mongoose = require("mongoose");
 
 const db = require("../models");
 
 const User = db.user;
 const Role = db.role;
-const IDevice = db.device
+const IDevice = require("../models/device.model");
+
 const RefreshToken = require("../models/refreshToken.model");
 
 const crypto = require('crypto');
@@ -13,7 +15,16 @@ var bcrypt = require("bcryptjs");
 const Joi = require("joi");
 const sendEmail = require("../Helpers/sendEmail");
 //const { IDevice } = require("../models/device");
-//const { IPAddressSchema } = require("../models/device");
+const { IPAddressSchema } = require("../models/device.model");
+const AdminUser = require("../models/Adduser.model");
+
+const Bike = require("../models/Stolenbike.model");
+const healthcheck = require("../models/HealthChecker.model");
+
+//<------------------------Account management-------------------------->
+
+
+
 exports.signup = (req, res) => {
   const user = new User({
     username: req.body.username,
@@ -258,25 +269,29 @@ exports.changepassword= async (req, res) => {
   }
 };
 
+
+//<----------------------------Device Management------------------------------------------>
+
 exports.register = async (req, res) => 
 {
-  
-    //const service = new AuthService(settings.AUTH);
-
-    //const { session, ...result } = await service.register(req.body, req.client);
-    const device = new IDevice({
+    const AddUser = new IDevice({
       
-      address:req.body.address,
-  
+    user: mongoose.Schema.Types.ObjectId,
+    device: mongoose.Schema.Types.ObjectId,
+    expiresAt: Date.now(),
+    revokedAt: Date.now(),
+    agents: req.body.UserAgentSchema,
+    
     });
-    device.save((err, device) => 
-    {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
+    
+    IDevice.adddevice(AddUser, (err, result)=>{
+      console.log("request is coming")
+      if(err){
+          return res.json({success: false, message: err});
       }
-    })
-  
+      console.log("request is coming")
+      return res.json({success: true, message: result});
+  });
   
 
 };
@@ -301,3 +316,84 @@ exports.Devicelogin = async (req, res) => {
     return res.status(500).json(new ServiceError());
   }
 };
+
+
+
+//<-----------------------------ADMIN DASHBOARD------------------------------->
+
+
+exports.AddAdminuser = async (req, res) => 
+{
+    const user = new AdminUser({
+      
+    Fullname: req.body.Fullname,
+    Email: req.body.Email,
+    //password: req.body.password,
+    ContactNumber:req.body.ContactNumber,
+    Address:req.body.Address,
+    CNIC:req.body.CNIC
+     
+  
+    });
+   user.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+  
+
+}
+//<<----------------------Theft management--------------------->>
+exports.BikeStolen = async (req, res) => 
+{
+    const user = new Bike({
+      
+    BikeID: req.body.BikeID,
+    BikeModel: req.body.BikeModel,
+   
+    Description:req.body.Description
+     
+  
+    });
+   user.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+  }
+
+
+  //<------------------------HealthChecker--------------------->
+  exports.HealthChecker = async (req, res) => 
+{
+  const checker=new  healthcheck  ({
+    ClientId:req.body.ClientId,
+    UserId:req.body.UserId,
+    
+    message: req.body.message,
+    timestamps: Date.now(),
+    uptime:process.uptime()
+    
+});
+
+checker.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
