@@ -10,6 +10,8 @@ db.role = require("./role.model");
 db.refreshToken = require("./refreshToken.model");
 db.IDevice = require("./device.model");
 db.AdminUser = require("./Adduser.model");
+db.notification = require("./notifications.model");
+db.mobile= require("./mobile.model");
 db.ROLES = ["user", "admin", "moderator"];
 db.approve={
     type: Boolean, default: false

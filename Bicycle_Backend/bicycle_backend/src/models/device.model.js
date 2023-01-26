@@ -6,38 +6,7 @@ const User = require("./user.model");
 const { uid } =require( "rand-token");
 const { escapeNumberedList } = require("discord.js");
 
-/*export const  IUserAgent= {
-  
-  
-  raw: String,
-  createdAt: Date,
-  updatedAt: Date,
-  
-}
-
- export const IIPAddress= 
-{
-  address: string,
-  createdAt: Date,
-  updatedAt: Date,
-}
-
-  export const ISession = {
-  user: Types.ObjectId | User,
-  device: Types.ObjectId | IDevice,
-  //agents: Types.Array<IUserAgentDocument>,
-  //hosts: Types.Array<IIPAddressDocument>,
-  token: string,
-  revokedReason: "logout" | "expired",
-  revokedAt: Date,
-  expiresAt: Date,
-  createdAt: Date,
-  updatedAt: Date,
-}
-
-*/
-
- const IPAddressSchema = new mongoose.Schema(
+/*const IPAddressSchema = new mongoose.Schema(
     {
       address: {
         type: String,
@@ -55,7 +24,7 @@ const { escapeNumberedList } = require("discord.js");
       },
     },
     { timestamps: true }
-  );
+  );*/
 
   
 const UserSchema = 
@@ -64,13 +33,13 @@ const UserSchema =
     ({
   createdAt: Date,
   updatedAt: Date,
-  user: {
-    type: String,
+  /*user: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
   device: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Device",
     required: true,
   },
@@ -81,7 +50,32 @@ const UserSchema =
   hosts: {
     type: [IPAddressSchema],
     required: true,
+  },*/
+  idEquipment:{
+    type:String,
+    required:true
   },
+  imei:{
+    type:String,
+    required: true
+  },
+  serialNumber:{
+    type:String,
+    required:true
+  },
+  typeDevice:{
+    type:String,
+    required:true
+  },
+  versionFirmware:{
+    type:String,
+    required:true
+  },
+  versionLogiciel:{
+    type:String,
+    required:true
+  },
+  
   token: {
     type: String,
     default: () => uid(256),
@@ -96,7 +90,7 @@ const UserSchema =
   },
   revokedAt: Date,
   revokedReason: {
-    type: String,
+    type: String, 
     enum: ["logout", "expired"],
   },
   

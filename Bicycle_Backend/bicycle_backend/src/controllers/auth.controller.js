@@ -18,9 +18,13 @@ const sendEmail = require("../Helpers/sendEmail");
 const { IPAddressSchema } = require("../models/device.model");
 const AdminUser = require("../models/Adduser.model");
 
-const Bike = require("../models/Stolenbike.model");
+const stolenBike = require("../models/Stolenbike.model");
 const healthcheck = require("../models/HealthChecker.model");
-
+const notify = require("../models/notifications.model")
+const mobile = require("../models/mobile.model")
+const location = require("../models/location.model")
+const logs = require("../models/logs.model")
+const Bikee = require("../models/Bike.model")
 //<------------------------Account management-------------------------->
 
 
@@ -276,11 +280,17 @@ exports.register = async (req, res) =>
 {
     const AddUser = new IDevice({
       
-    user: mongoose.Schema.Types.ObjectId,
-    device: mongoose.Schema.Types.ObjectId,
+   //user: mongoose.Schema.Types.ObjectId,
+    //device: mongoose.Schema.Types.ObjectId,
     expiresAt: Date.now(),
     revokedAt: Date.now(),
-    agents: req.body.UserAgentSchema,
+    
+    imei:req.body.imei,
+    idEquipment:req.body.idEquipment,
+    serialNumber:req.body.serialNumber,
+    typeDevice:req.body.typeDevice,
+    versionFirmware:req.body.versionFirmware,
+    versionLogiciel:req.body.versionLogiciel
     
     });
     
@@ -351,11 +361,11 @@ exports.AddAdminuser = async (req, res) =>
 //<<----------------------Theft management--------------------->>
 exports.BikeStolen = async (req, res) => 
 {
-    const user = new Bike({
+    const user = new stolenBike({
       
-    BikeID: req.body.BikeID,
-    BikeModel: req.body.BikeModel,
-   
+    Broadcast: Date.now(),
+    status: req.body.status,
+    stolen_location:req.body.stolen_location,
     Description:req.body.Description
      
   
@@ -387,6 +397,118 @@ exports.BikeStolen = async (req, res) =>
 });
 
 checker.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
+
+//<-----------------------Notifications----------------------------->
+exports.notifications = async (req, res) => 
+{
+  const notification=new notify ({
+    notification_id:req.body.notification_id,
+    // user_id:notify.User_id.push,
+    
+    message: req.body.message,
+    timestamps: Date.now(),
+    // mobile_id:req.body.mobile_id
+    
+});
+
+notification.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
+
+//<-----------------------MOBILE----------------------------->
+exports.mobileapi = async (req, res) => 
+{
+  const mobilee = new mobile ({
+
+  mobile_id:req.body.mobile_id,
+  mobile_name:req.body.mobile_name,
+  mobile_model:req.body.mobile_model,
+  mobile_IMEI:req.body.mobile_IMEI
+});
+
+mobilee.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
+//<-----------------------Location----------------------------->
+exports.locationapi = async (req, res) => 
+{
+  const locationn = new location({
+
+  latitude:req.body.latitude,
+  longitude:req.body.longitude,
+  mac_address:req.body.mac_address
+});
+
+locationn.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
+//<-----------------------Logs----------------------------->
+exports.logsapi = async (req, res) => 
+{
+  const logss = new logs({
+
+  log_id:req.body.log_id,
+  
+});
+
+logss.save((err, result)=>
+    {
+      console.log("request is incoming");
+        if(err)
+        {
+            return res.json({success: false, message: err});
+        }
+        
+        return res.json({success: true, message: result});
+    })
+}
+//<-------------------BIKE----------------------------------->
+exports.Bikeapi = async (req, res) => 
+{
+  const Bikes = new Bikee({
+
+ bike_model:req.body.bike_model,
+ bike_description:req.body.bike_description,
+ bike_status:req.body.bike_status,
+
+  
+});
+
+Bikes.save((err, result)=>
     {
       console.log("request is incoming");
         if(err)

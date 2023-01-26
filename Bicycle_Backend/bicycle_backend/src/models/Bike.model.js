@@ -1,21 +1,13 @@
 const mongoose = require("mongoose");
 var bcrypt = require('bcryptjs');
-const uuid = require('uuid')
 const jwt = require('jsonwebtoken');
+const { string } = require("joi");
+const uuid = require('uuid');
+// usage
+const uniqueRandomID = uuid.v4()
 require("dotenv").config();
 
 var userSchema = mongoose.Schema({
-    Broadcast:Date,
-    status:{
-        type: String
-    },
-    stolen_location:{
-        type: String,
-        required: true
-    },
-    Description:{
-        type: String
-    },
     bike_id:{
         type: String,
         default: () => uuid.v4()
@@ -28,7 +20,19 @@ var userSchema = mongoose.Schema({
         type: String,
         default: () => uuid.v4()
     },
-    
+    bike_model:{
+        type: String
+    },
+    bike_description:{
+        type: String
+    },
+    bike_status:{
+        type: String,
+        
+    },
  });
-var stolenBike = mongoose.model('stolenBike', userSchema);
-module.exports = stolenBike;
+var Bike = mongoose.model('Bike', userSchema);
+
+
+
+module.exports = Bike;

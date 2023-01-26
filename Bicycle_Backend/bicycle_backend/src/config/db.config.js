@@ -7,7 +7,7 @@ const config={
     default : {
         secret: 'mySecret key',
        
-        DATABASE: 'mongodb+srv://biketest:bike123@cluster0.yxpbbrz.mongodb.net/?retryWrites=true&w=majority',
+        DATABASE: 'mongodb+srv://bts-user:t584QKKocMHaUv9R@cluster0.mnzwa.mongodb.net/?retryWrites=true&w=majority',
          
     }
 }
