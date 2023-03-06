@@ -64,6 +64,7 @@ exports.signup = (req, res) => {
             }
 
             res.send({ message: "User was registered successfully!" });
+            
           });
         }
       );
@@ -134,6 +135,7 @@ exports.signin = (req, res) => {
         roles: authorities,
         accessToken: token,
         refreshToken: refreshToken,
+        message:"successfully login "
       });
     });
 };
